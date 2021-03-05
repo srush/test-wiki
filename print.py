@@ -7,6 +7,12 @@ root = tree.getroot()
 data = {"snippets" : []}
 my_tree = data["snippets"]
 
+def get_text(e):
+    s = e.text
+    if s is None:
+        s = "".join(e.itertext())
+    return s
+
 class Processor:
     def __init__(self):
         self.head = None
@@ -30,15 +36,15 @@ class Processor:
             self.head = root.text
             if self.head != self.title:
                 self.active_questions["header"] = [f"Please describe {self.head} with respect to {self.title}"]
+            my_tree.append({"text": get_text(root),
+                            "questions" : []})
         elif root.tag == "p":
-            #print("head", [q for v in self.active_questions.values() for q in v],
-            #      "text", root.text)
-            my_tree.append({"text": root.text, "questions": [q for v in self.active_questions.values() for q in v],
+            my_tree.append({"text": get_text(root),
+                            "questions": [q for v in self.active_questions.values() for q in v],
             } )
             
         for child in root:  
             self.process(child)
-
 
         if root.tag == "doc":
             pass
